@@ -1,0 +1,25 @@
+{
+  "name": "thrifty-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "npx nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anuxoxo/thrifty-backend.git"
+  },
+  "author": "Kumari Anushka, Vansh Chinda",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/anuxoxo/thrifty-backend/issues"
+  },
+  "homepage": "https://github.com/anuxoxo/thrifty-backend#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "mongoose": "^6.8.3"
+  }
+}
