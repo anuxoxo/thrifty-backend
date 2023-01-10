@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const cors = require("cors");
 
 const authRoutes = require("./routes/authRoutes");
+const userRoutes = require("./routes/userRoutes");
 
 const app = express();
 const PORT = process.env.PORT || 8000;
@@ -17,6 +18,7 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 app.use("/api/auth", authRoutes);
+app.use("/api/user", userRoutes);
 
 mongoose.set('strictQuery', false);
 mongoose.connect(process.env.DB_URI)

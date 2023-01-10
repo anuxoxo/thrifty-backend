@@ -22,6 +22,10 @@ const userSchema = new Schema({
     type: String,
     defaultValue: null
   },
+  interestedCategories: {
+    type: [{ type: "String" }],
+    defaultValue: []
+  }
 });
 
 const User = mongoose.model('User', userSchema);
