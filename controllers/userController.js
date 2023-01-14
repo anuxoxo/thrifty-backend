@@ -17,5 +17,30 @@ module.exports.getUserDetails = async (req, res) => {
 }
 
 module.exports.updateUserDetails = async (req, res) => {
-  // TODO: Vansh
+
+  try {
+    let user = await User.findOne({ email: req.body.email })
+    if (!user) return sendError(res, "Invalid User!")
+
+    User.findOneAndUpdate({ email: req.body.email },
+      { $set: { ...req.body } },
+      { new: true },
+      async (err, newUser) => {
+        if (!err) {
+          delete newUser._doc.password;
+          delete newUser._doc.__v;
+
+          return res.json({
+            success: true,
+            message: "Personal Information updated successfully!",
+            user: newUser
+          });
+
+        } else {
+          return sendError(res, err.message)
+        }
+      })
+  } catch (err) {
+    return sendError(res, err.message)
+  }
 }
