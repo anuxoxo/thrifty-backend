@@ -1,9 +1,7 @@
 const mongoose = require('mongoose');
 const { isEmail } = require("validator");
 
-const { Schema } = mongoose;
-
-const userSchema = new Schema({
+const userSchema = new mongoose.Schema({
   email: {
     type: String,
     unique: [true, "User with given email already exists"],

@@ -5,6 +5,6 @@ const { validateToken } = require("../utils/jwt");
 const userController = require("../controllers/userController");
 
 router.get("/me/:id", validateToken, userController.getUserDetails);
-router.patch("/update-deatils", validateToken, userController.updateUserDetails);
+router.patch("/update-details", validateToken, userController.updateUserDetails);
 
 module.exports = router;

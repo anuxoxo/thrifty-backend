@@ -34,13 +34,13 @@ module.exports.googleAuth = async (req, res) => {
           message: "Registration Successful"
         });
       } catch (err) {
-        console.log("err 1", err)
+        // console.log("err 1", err)
         let errors = handleError(err);
         return sendError(res, errors);
       }
     })
     .catch(error => {
-      console.log("err 2", error)
+      // console.log("err 2", error)
       sendError(res, error.message)
     })
 }
