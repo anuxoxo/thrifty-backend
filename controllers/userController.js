@@ -17,7 +17,6 @@ module.exports.getUserDetails = async (req, res) => {
 }
 
 module.exports.updateUserDetails = async (req, res) => {
-
   try {
     let user = await User.findOne({ email: req.body.email })
     if (!user) return sendError(res, "Invalid User!")
