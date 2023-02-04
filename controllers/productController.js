@@ -77,11 +77,11 @@ module.exports.createProduct = async (req, res) => {
       const newProduct = await Product.create({ sellerId, amount, name, category });
       // if (!newProduct) return sendError(res, "Couldn't create Product!")
 
-      return {
+      return res.json({
         success: true,
         message: "Product created.",
         product: newProduct
-      }
+      })
     }
     catch (err) {
       return sendError(res, err.message)
@@ -105,11 +105,11 @@ module.exports.updateProduct = async (req, res) => {
     if (!updatedProduct) {
       return sendError(res, "Couldn't update Product!")
     } else {
-      return {
+      return res.json({
         success: true,
         message: "Product updated",
         product: updatedProduct
-      }
+      })
     }
   } catch (err) {
     return sendError(res, err.message)
@@ -128,10 +128,10 @@ module.exports.deleteProduct = async (req, res) => {
     if (!tempProduct) {
       return sendError(res, "Couldn't delete product!")
     } else {
-      return {
+      return res.json({
         success: true,
         message: "Product Deleted Successfully"
-      }
+      })
     }
   } catch (err) {
     return sendError(res, err.message)
