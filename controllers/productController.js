@@ -27,15 +27,15 @@ module.exports.getProductsByCategory = async (req, res) => {
     if (!category)
       return sendError(res, "Parameters missing")
 
-    const product = await Product.find({ category })
-    if (!product) {
+    const products = await Product.find({ category })
+    if (!products) {
       sendError(res, "Product doesn't exist")
     }
     else {
       res.json({
         success: true,
         message: "Products found successfully.",
-        product
+        products
       })
     }
   } catch (err) {
@@ -66,6 +66,27 @@ module.exports.getProductById = async (req, res) => {
   }
 }
 
+module.exports.search = async (req, res) => {
+  const { searchText } = req.body;
+
+  if (!searchText) return res.json({ success: true, message: "No Products Found", products: [] })
+
+  const products = await Product.find({
+    $or: [
+      { name: new RegExp(searchText, 'i') },
+      { category: new RegExp(searchText, 'i') },
+    ]
+  })
+
+  if (!products) return sendError(res, "Some error occurred!")
+
+  return res.json({
+    success: true,
+    message: "Matches found",
+    products
+  })
+}
+
 module.exports.createProduct = async (req, res) => {
   try {
     const { sellerId, amount, name, category } = req.body;
@@ -75,7 +96,7 @@ module.exports.createProduct = async (req, res) => {
 
     try {
       const newProduct = await Product.create({ sellerId, amount, name, category });
-      // if (!newProduct) return sendError(res, "Couldn't create Product!")
+      if (!newProduct) return sendError(res, "Couldn't create Product!")
 
       return res.json({
         success: true,
