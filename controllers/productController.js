@@ -20,6 +20,29 @@ module.exports.getProducts = async (req, res) => {
   }
 }
 
+module.exports.getProductsBySeller = async (req, res) => {
+  try {
+    const sellerId = req.params.sellerId;
+
+    if (!sellerId)
+      return sendError(res, "Parameters missing")
+
+    const products = await Product.find({ sellerId })
+    if (!products) {
+      sendError(res, "Product doesn't exist")
+    }
+    else {
+      res.json({
+        success: true,
+        message: "Products found successfully.",
+        products
+      })
+    }
+  } catch (err) {
+    return sendError(res, err.message)
+  }
+}
+
 module.exports.getProductsByCategory = async (req, res) => {
   try {
     const category = req.params.category;

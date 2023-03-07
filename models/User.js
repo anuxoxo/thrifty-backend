@@ -23,7 +23,11 @@ const userSchema = new mongoose.Schema({
   interestedCategories: {
     type: [{ type: "String" }],
     defaultValue: []
-  }
+  },
+  bids: [{
+    type: mongoose.SchemaTypes.ObjectId,
+    ref: "User",
+  }]
 });
 
 const User = mongoose.model('User', userSchema);

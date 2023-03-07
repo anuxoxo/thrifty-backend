@@ -20,8 +20,13 @@ const bidSchema = new Schema({
   bidAmount: {
     type: Number,
     required: true
+  },
+  status: {
+    type: String,
+    defaultValue: "pending",
+    required: true,
   }
 });
 
-const User = mongoose.model('User', bidSchema);
-module.exports = User;
+const Bid = mongoose.model('Bid', bidSchema);
+module.exports = Bid;
