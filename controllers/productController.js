@@ -9,7 +9,7 @@ module.exports.getProducts = async (req, res) => {
       sendError(res, "Product doesn't exist")
     }
     else {
-      res.json({
+      return res.json({
         success: true,
         message: "Products found successfully.",
         products

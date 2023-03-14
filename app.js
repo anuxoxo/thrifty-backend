@@ -6,6 +6,7 @@ const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
 const productRoutes = require("./routes/productRoutes");
 const bidRoutes = require("./routes/bidRoutes");
+const orderRoutes = require("./routes/orderRoutes");
 
 const app = express();
 const PORT = process.env.PORT || 8000;
@@ -23,6 +24,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/product", productRoutes);
 app.use("/api/bid", bidRoutes);
+app.use("/api/order", orderRoutes);
 
 mongoose.set('strictQuery', false);
 mongoose.connect(process.env.DB_URI)
