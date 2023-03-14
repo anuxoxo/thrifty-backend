@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
-const bidSchema = new Schema({
+const orderSchema = new Schema({
   sellerId: {
     type: mongoose.SchemaTypes.ObjectId,
     ref: "User",
@@ -21,13 +21,19 @@ const bidSchema = new Schema({
     type: Number,
     required: true
   },
-  status: {
+  orderStatus: {
     type: String,
     defaultValue: "Pending",
     required: true,
-    enum: ["Accepted", "Pending"]
+    enum: ["Delivered", "Pending"]
+  },
+  paymentStatus: {
+    type: String,
+    defaultValue: "Pending",
+    required: true,
+    enum: ["Completed", "Pending", "Processing"]
   }
 });
 
-const Bid = mongoose.model('Bid', bidSchema);
-module.exports = Bid;
+const Order = mongoose.model('Order', orderSchema);
+module.exports = Order;

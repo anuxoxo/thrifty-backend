@@ -1,6 +1,7 @@
 const Bid = require('../models/Bid');
 const User = require('../models/User');
 const Product = require('../models/Product');
+const Order = require('../models/Order');
 
 const { sendError } = require("../utils/helper");
 
@@ -42,7 +43,7 @@ module.exports.createBid = async (req, res) => {
       buyerId,
       productId,
       bidAmount,
-      status: "pending"
+      status: "Pending"
     })
 
     if (!newBid) return sendError(res, "Some error occurred!")
@@ -68,7 +69,7 @@ module.exports.viewSellerBidRequests = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const requests = await Bid.find({ sellerId: id, status: "pending" });
+    const requests = await Bid.find({ sellerId: id, status: "Pending" });
     if (!requests) return sendError(res, "Some error occurred!")
 
     const resolvedRequests = await resolveRequests(requests)
@@ -88,7 +89,7 @@ module.exports.viewBuyerBidRequests = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const requests = await Bid.find({ buyerId: id, status: "pending" });
+    const requests = await Bid.find({ buyerId: id, status: "Pending" });
     if (!requests) return sendError(res, "Some error occurred!")
 
     const resolvedRequests = await resolveRequests(requests)
@@ -125,4 +126,78 @@ async function resolveProducts(request) {
     seller: { ...results[1]._doc },
     buyer: { ...results[2]._doc },
   };
+}
+
+module.exports.rejectBid = async (req, res) => {
+  const { sellerId, buyerId, productId } = req.body;
+
+  try {
+    // 1. delete request document
+    const tempRequest = await Bid.deleteOne({
+      sellerId, buyerId, productId
+    });
+    if (!tempRequest.deletedCount) return sendError(res, "Some error occurred!");
+
+    // 2. Remove product id from buyers' bids
+    const buyerObj = await User.findByIdAndUpdate(buyerId, {
+      $pull: { bids: productId }
+    })
+    if (!buyerObj) return sendError(res, "Some error occurred!")
+
+    // 3. fetch recent requests 
+    const requests = await Bid.find({ sellerId, type: "Pending" });
+    if (!requests) return sendError(res, "Some error occurred!")
+
+    const resolvedRequests = await resolveRequests(requests);
+
+    res.json({
+      success: true,
+      messages: "Request rejected",
+      requests: resolvedRequests
+    })
+
+  } catch (err) {
+    return sendError(res, err.message)
+  }
+}
+
+module.exports.acceptBid = async (req, res) => {
+  const { sellerId, buyerId, productId, bidAmount } = req.body;
+
+  if (!sellerId || !buyerId || !productId || !bidAmount)
+    return sendError(res, "Parameters missing")
+
+  try {
+    // 1. update request doc to accepted
+    const updatedrequest = await Bid.findOneAndUpdate(
+      { sellerId, buyerId, productId, },
+      { type: "Accepted" });
+
+    if (!updatedrequest) return sendError(res, "Some error occurred!");
+
+    // 2. remove product id from buyer's bids
+    const buyerObj = await User.findByIdAndUpdate(buyerId, {
+      $pull: { bids: productId }
+    })
+    if (!buyerObj) return sendError(res, "Some error occurred!")
+
+    // 3. Create new order
+    const newOrder = await Order.create({ sellerId, buyerId, productId, bidAmount });
+    if (!newOrder) return sendError(res, "Couldn't place order!")
+
+    // 4. fetch recent requests 
+    const requests = await Bid.find({ sellerId, type: "Pending" });
+    if (!requests) return sendError(res, "Some error occurred!")
+
+    const resolvedRequests = await resolveRequests(requests)
+
+    res.json({
+      success: true,
+      messages: "Request Accepted",
+      requests: resolvedRequests
+    })
+
+  } catch (err) {
+    return sendError(res, err.message)
+  }
 }

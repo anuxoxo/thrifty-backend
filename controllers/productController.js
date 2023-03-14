@@ -117,19 +117,15 @@ module.exports.createProduct = async (req, res) => {
     if (!sellerId || !amount || !name || !category)
       return sendError(res, "Parameters missing")
 
-    try {
-      const newProduct = await Product.create({ sellerId, amount, name, category });
-      if (!newProduct) return sendError(res, "Couldn't create Product!")
+    const newProduct = await Product.create({ sellerId, amount, name, category });
+    if (!newProduct) return sendError(res, "Couldn't create Product!")
 
-      return res.json({
-        success: true,
-        message: "Product created.",
-        product: newProduct
-      })
-    }
-    catch (err) {
-      return sendError(res, err.message)
-    }
+    return res.json({
+      success: true,
+      message: "Product created.",
+      product: newProduct
+    })
+
   } catch (err) {
     return sendError(res, err.message)
   }
