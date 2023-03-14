@@ -4,12 +4,12 @@ const { createTokens } = require("../utils/jwt");
 const { handleError, sendError } = require("../utils/helper");
 
 module.exports.googleAuth = async (req, res) => {
-  const { accessToken } = req.body;
+  const accessToken = req.headers["authorization"];
 
   axios.get("https://www.googleapis.com/userinfo/v2/me",
     { headers: { "Authorization": "Bearer " + accessToken } })
-    .then(async res => {
-      const { name, email, picture, id } = res.data
+    .then(async response => {
+      const { name, email, picture, id } = response.data
       // store in db
       try {
         const user = await User.findOne({ email });
@@ -19,7 +19,7 @@ module.exports.googleAuth = async (req, res) => {
           const accessToken = createTokens(user);
           return res.json({
             success: true,
-            user: { ...user, accessToken },
+            user: { ...user._doc, accessToken },
             message: "Login Successful"
           });
         }
@@ -30,7 +30,7 @@ module.exports.googleAuth = async (req, res) => {
 
         return res.status(201).json({
           success: true,
-          user: { ...newUser, accessToken },
+          user: { ...newUser._doc, accessToken },
           message: "Registration Successful"
         });
       } catch (err) {
