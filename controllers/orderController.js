@@ -2,11 +2,11 @@ const Order = require('../models/Order');
 const { sendError } = require("../utils/helper");
 
 module.exports.getOrderDetails = async (req, res) => {
-  const { sellerId, buyerId } = req.body;
-  if (!sellerId || !buyerId) return sendError("Missing Parameters");
+  const { id } = req.body;
+  if (!id) return sendError(res, "Missing Parameters");
 
   try {
-    const orders = await Order.find({ $or: [{ sellerId }, { buyerId }] });
+    const orders = await Order.find({ $or: [{ sellerId: id }, { buyerId: id }] });
 
     if (!orders) {
       sendError(res, "Orders doesn't exist")
