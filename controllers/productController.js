@@ -112,12 +112,12 @@ module.exports.search = async (req, res) => {
 
 module.exports.createProduct = async (req, res) => {
   try {
-    const { sellerId, amount, name, category } = req.body;
+    const { sellerId, amount, name, location, category, images } = req.body;
 
-    if (!sellerId || !amount || !name || !category)
+    if (!sellerId || !amount || !name || !category || !location || !images)
       return sendError(res, "Parameters missing")
 
-    const newProduct = await Product.create({ sellerId, amount, name, category });
+    const newProduct = await Product.create({ sellerId, amount, name, category, location, images });
     if (!newProduct) return sendError(res, "Couldn't create Product!")
 
     return res.json({

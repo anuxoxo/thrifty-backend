@@ -182,7 +182,7 @@ module.exports.acceptBid = async (req, res) => {
     if (!buyerObj) return sendError(res, "Some error occurred!")
 
     // 3. Create new order
-    const newOrder = await Order.create({ sellerId, buyerId, productId, bidAmount });
+    const newOrder = await Order.create({ sellerId, buyerId, productId, bidAmount, orderStatus: "Pending", paymentStatus: "Pending" });
     if (!newOrder) return sendError(res, "Couldn't place order!")
 
     // 4. fetch recent requests 

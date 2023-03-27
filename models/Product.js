@@ -14,11 +14,16 @@ const productSchema = new mongoose.Schema({
     type: String,
     required: [true, "Name is required"]
   },
-  category: {
+  location: {
     type: String,
+    required: [true, "Location is required"]
+  },
+  category: {
+    type: [String],
     required: [true, "Category is required"],
     enum: ["Clothing", "Furniture", "Electronics", "Books", "Sports", "Others"]
   },
+  images: [],
 });
 
 const Product = mongoose.model("Product", productSchema);
