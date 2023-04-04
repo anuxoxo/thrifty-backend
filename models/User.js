@@ -1,9 +1,7 @@
 const mongoose = require('mongoose');
 const { isEmail } = require("validator");
 
-const { Schema } = mongoose;
-
-const userSchema = new Schema({
+const userSchema = new mongoose.Schema({
   email: {
     type: String,
     unique: [true, "User with given email already exists"],
@@ -22,6 +20,14 @@ const userSchema = new Schema({
     type: String,
     defaultValue: null
   },
+  interestedCategories: {
+    type: [{ type: "String" }],
+    defaultValue: []
+  },
+  bids: [{
+    type: mongoose.SchemaTypes.ObjectId,
+    ref: "Product",
+  }]
 });
 
 const User = mongoose.model('User', userSchema);
