@@ -65,6 +65,25 @@ module.exports.createBid = async (req, res) => {
   }
 }
 
+module.exports.viewSellerBidRequestsByProductId = async (req, res) => {
+  const { id, productId } = req.params;
+
+  try {
+    const requests = await Bid.find({ sellerId: id, productId, status: "Pending" });
+    if (!requests) return sendError(res, "Some error occurred!")
+
+    const resolvedRequests = await resolveRequests(requests)
+
+    res.json({
+      success: true,
+      messages: "All Bid Requests Fetched",
+      bids: resolvedRequests
+    })
+  }
+  catch (err) {
+    return sendError(res, err.message)
+  }
+}
 module.exports.viewSellerBidRequests = async (req, res) => {
   const { id } = req.params;
 
@@ -129,12 +148,12 @@ async function resolveProducts(request) {
 }
 
 module.exports.rejectBid = async (req, res) => {
-  const { sellerId, buyerId, productId } = req.body;
+  const { sellerId, buyerId, productId, bidAmount } = req.body;
 
   try {
     // 1. delete request document
     const tempRequest = await Bid.deleteOne({
-      sellerId, buyerId, productId
+      sellerId, buyerId, productId, bidAmount
     });
     if (!tempRequest.deletedCount) return sendError(res, "Some error occurred!");
 
@@ -145,7 +164,7 @@ module.exports.rejectBid = async (req, res) => {
     if (!buyerObj) return sendError(res, "Some error occurred!")
 
     // 3. fetch recent requests 
-    const requests = await Bid.find({ sellerId, type: "Pending" });
+    const requests = await Bid.find({ sellerId, status: "Pending" });
     if (!requests) return sendError(res, "Some error occurred!")
 
     const resolvedRequests = await resolveRequests(requests);
@@ -170,8 +189,10 @@ module.exports.acceptBid = async (req, res) => {
   try {
     // 1. update request doc to accepted
     const updatedrequest = await Bid.findOneAndUpdate(
-      { sellerId, buyerId, productId, },
-      { type: "Accepted" });
+      { sellerId, buyerId, productId, bidAmount },
+      { status: "Accepted" });
+
+    console.log(updatedrequest)
 
     if (!updatedrequest) return sendError(res, "Some error occurred!");
 
@@ -186,7 +207,7 @@ module.exports.acceptBid = async (req, res) => {
     if (!newOrder) return sendError(res, "Couldn't place order!")
 
     // 4. fetch recent requests 
-    const requests = await Bid.find({ sellerId, type: "Pending" });
+    const requests = await Bid.find({ sellerId, productId, status: "Pending" });
     if (!requests) return sendError(res, "Some error occurred!")
 
     const resolvedRequests = await resolveRequests(requests)

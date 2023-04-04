@@ -9,7 +9,7 @@ const bidRoutes = require("./routes/bidRoutes");
 const orderRoutes = require("./routes/orderRoutes");
 
 const app = express();
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.PORT || 8001;
 
 // middlewares
 app.use(cors({
