@@ -192,8 +192,6 @@ module.exports.acceptBid = async (req, res) => {
       { sellerId, buyerId, productId, bidAmount },
       { status: "Accepted" });
 
-    console.log(updatedrequest)
-
     if (!updatedrequest) return sendError(res, "Some error occurred!");
 
     // 2. remove product id from buyer's bids
@@ -203,7 +201,7 @@ module.exports.acceptBid = async (req, res) => {
     if (!buyerObj) return sendError(res, "Some error occurred!")
 
     // 3. Create new order
-    const newOrder = await Order.create({ sellerId, buyerId, productId, bidAmount, orderStatus: "Pending", paymentStatus: "Pending" });
+    const newOrder = await Order.create({ sellerId, buyerId, productId, bidAmount, orderStatus: "Processing", paymentStatus: "Pending" });
     if (!newOrder) return sendError(res, "Couldn't place order!")
 
     // 4. fetch recent requests 

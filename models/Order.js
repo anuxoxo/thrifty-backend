@@ -23,15 +23,15 @@ const orderSchema = new Schema({
   },
   orderStatus: {
     type: String,
-    defaultValue: "Pending",
+    defaultValue: "Processing",
     required: true,
-    enum: ["Delivered", "Pending", "Processing"]
+    enum: ["Delivered", "Processing", "Cancelled"]
   },
   paymentStatus: {
     type: String,
     defaultValue: "Pending",
     required: true,
-    enum: ["Completed", "Pending", "Processing"]
+    enum: ["Completed", "Pending"]
   }
 });
 

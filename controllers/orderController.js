@@ -3,6 +3,31 @@ const Order = require('../models/Order');
 const Product = require('../models/Product');
 const { sendError } = require("../utils/helper");
 
+module.exports.update = async (req, res) => {
+  try {
+    const { id, data } = req.body;
+
+    if (!id || !data)
+      return sendError(res, "Parameters missing")
+
+    const updatedProduct = await Order.findByIdAndUpdate(id,
+      { $set: { ...data } },
+      { new: true });
+
+    if (!updatedProduct) {
+      return sendError(res, "Couldn't update Order`!")
+    } else {
+      return res.json({
+        success: true,
+        message: "Order updated",
+        product: updatedProduct
+      })
+    }
+  } catch (err) {
+    return sendError(res, err.message)
+  }
+}
+
 module.exports.getOrderDetails = async (req, res) => {
   const { id } = req.body;
   if (!id) return sendError(res, "Missing Parameters");
